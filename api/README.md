@@ -3,30 +3,15 @@
 ## Contents
 - [Running API tests locally](#running-api-tests-locally)
 - [Considerations for your backend with CORS](#considerations-for-your-backend-with-cors)
-  + [Authentication Header:](#authentication-header)
-- [JSON Objects returned by API:](#json-objects-returned-by-api)
-  + [Other status codes:](#other-status-codes)
-- [Endpoints:](#endpoints)
-  + [Authentication:](#authentication)
-  + [Registration:](#registration)
-  + [Get Current User](#get-current-user)
-  + [Update User](#update-user)
-  + [Get Profile](#get-profile)
-  + [Follow user](#follow-user)
-  + [Unfollow user](#unfollow-user)
-  + [List Articles](#list-articles)
-  + [Feed Articles](#feed-articles)
-  + [Get Article](#get-article)
-  + [Create Article](#create-article)
-  + [Update Article](#update-article)
-  + [Delete Article](#delete-article)
-  + [Add Comments to an Article](#add-comments-to-an-article)
-  + [Get Comments from an Article](#get-comments-from-an-article)
-  + [Delete Comment](#delete-comment)
-  + [Favorite Article](#favorite-article)
-  + [Unfavorite Article](#unfavorite-article)
-  + [Get Tags](#get-tags)
-- [Examples of API's Responses:](#examples-of-apis-responses)
+  + [Authentication Header](#authentication-header)
+- [JSON Objects returned by API](#json-objects-returned-by-api)
+  + [Other status codes](#other-status-codes)
+- [Endpoints](#endpoints)
+  + [Users](#users-endpoints)
+  + [Profiles](#profiles-endpoints)
+  + [Articles](#articles-endpoints)
+  + [Tags](#tags-endpoint)  
+- [Examples of API's Responses](#examples-of-apis-responses)
   + [Users (for authentication)](#users-for-authentication)
   + [Profile](#profile)
   + [Single Article](#single-article)
@@ -51,11 +36,11 @@ For more details, see [`run-api-tests.sh`](run-api-tests.sh).
 
 If the backend is about to run on a different host/port than the frontend, make sure to handle `OPTIONS` too and return correct `Access-Control-Allow-Origin` and `Access-Control-Allow-Headers` (e.g. `Content-Type`).
 
-### Authentication Header:
+### Authentication Header
 
 `Authorization: Token jwt.token.here`
 
-## JSON Objects returned by API:
+## JSON Objects returned by API
 
 Make sure the right content type like `Content-Type: application/json; charset=utf-8` is correctly returned. 
 
@@ -63,7 +48,7 @@ For examples, see [Examples of API's Responses](#examples-of-apis-responses)
 
 
 
-### Other status codes:
+### Other status codes
 
 401 for Unauthorized requests, when a request requires authentication but it isn't provided
 
@@ -72,9 +57,20 @@ For examples, see [Examples of API's Responses](#examples-of-apis-responses)
 404 for Not found requests, when a resource can't be found to fulfill the request
 
 
-## Endpoints:
+## Endpoints
+The endpoints that are supported fall into four broad categories corresponding to:
 
-### Authentication:
+```
+/api/users/...
+/api/profiles/...
+/api/articles/...
+/api/tags
+```
+
+
+### Users Endpoints
+
+#### Authentication
 
 `POST /api/users/login`
 
@@ -93,7 +89,7 @@ No authentication required, returns a [User](#users-for-authentication)
 Required fields: `email`, `password`
 
 
-### Registration:
+#### Registration
 
 `POST /api/users`
 
@@ -114,7 +110,7 @@ Required fields: `email`, `username`, `password`
 
 
 
-### Get Current User
+#### Get Current User
 
 `GET /api/user`
 
@@ -122,7 +118,7 @@ Authentication required, returns a [User](#users-for-authentication) that's the 
 
 
 
-### Update User
+#### Update User
 
 `PUT /api/user`
 
@@ -143,8 +139,8 @@ Authentication required, returns the [User](#users-for-authentication)
 Accepted fields: `email`, `username`, `password`, `image`, `bio`
 
 
-
-### Get Profile
+### Profiles Endpoints
+#### Get Profile
 
 `GET /api/profiles/:username`
 
@@ -152,7 +148,7 @@ Authentication optional, returns a [Profile](#profile)
 
 
 
-### Follow user
+#### Follow user
 
 `POST /api/profiles/:username/follow`
 
@@ -162,7 +158,7 @@ No additional parameters required
 
 
 
-### Unfollow user
+#### Unfollow user
 
 `DELETE /api/profiles/:username/follow`
 
@@ -171,8 +167,8 @@ Authentication required, returns a [Profile](#profile)
 No additional parameters required
 
 
-
-### List Articles
+### Articles Endpoints
+#### List Articles
 
 `GET /api/articles`
 
@@ -204,7 +200,7 @@ Authentication optional, will return [multiple articles](#multiple-articles), or
 
 
 
-### Feed Articles
+#### Feed Articles
 
 `GET /api/articles/feed`
 
@@ -213,13 +209,13 @@ Can also take `limit` and `offset` query parameters like [List Articles](#list-a
 Authentication required, will return [multiple articles](#multiple-articles) created by followed users, ordered by most recent first.
 
 
-### Get Article
+#### Get Article
 
 `GET /api/articles/:slug`
 
 No authentication required, will return [single article](#single-article)
 
-### Create Article
+#### Create Article
 
 `POST /api/articles`
 
@@ -244,7 +240,7 @@ Optional fields: `tagList` as an array of Strings
 
 
 
-### Update Article
+#### Update Article
 
 `PUT /api/articles/:slug`
 
@@ -265,7 +261,7 @@ Optional fields: `title`, `description`, `body`
 The `slug` also gets updated when the `title` is changed
 
 
-### Delete Article
+#### Delete Article
 
 `DELETE /api/articles/:slug`
 
@@ -273,7 +269,7 @@ Authentication required
 
 
 
-### Add Comments to an Article
+#### Add Comments to an Article
 
 `POST /api/articles/:slug/comments`
 
@@ -293,7 +289,7 @@ Required field: `body`
 
 
 
-### Get Comments from an Article
+#### Get Comments from an Article
 
 `GET /api/articles/:slug/comments`
 
@@ -301,7 +297,7 @@ Authentication optional, returns [multiple comments](#multiple-comments)
 
 
 
-### Delete Comment
+#### Delete Comment
 
 `DELETE /api/articles/:slug/comments/:id`
 
@@ -309,7 +305,7 @@ Authentication required
 
 
 
-### Favorite Article
+#### Favorite Article
 
 `POST /api/articles/:slug/favorite`
 
@@ -319,7 +315,7 @@ No additional parameters required
 
 
 
-### Unfavorite Article
+#### Unfavorite Article
 
 `DELETE /api/articles/:slug/favorite`
 
@@ -328,15 +324,15 @@ Authentication required, returns the [Article](#single-article)
 No additional parameters required
 
 
-
-### Get Tags
+### Tags Endpoint
+#### Get Tags
 
 `GET /api/tags`
 
 No authentication required, returns a [List of Tags](#list-of-tags)
 
 
-## Examples of API's Responses:
+## Examples of API's Responses
 
 ### Users (for authentication)
 
